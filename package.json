@@ -1,0 +1,12 @@
+{
+  "name": "clawendar",
+  "version": "1.0.0",
+  "description": "A minimal calendar CLI application",
+  "type": "module",
+  "bin": {
+    "clawendar": "./bin/clawendar.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "clawendar",
+  "version": "0.1.0",
+  "description": "Minimal CLI calendar with timezone support",
+  "type": "module",
+  "bin": {
+    "clawendar": "./bin/clawendar.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "license": "MIT"
+}

@@ -1,1 +1,101 @@
-Minimal calendar cli for openclaw agent.
+# local-clawendar (clawendar)
+
+Minimal, file-backed calendar CLI with strict timezone-aware datetimes.
+
+- Stores events as JSON on disk (default: `~/.clawendar/events.json`)
+- Requires **ISO-8601 datetimes with a timezone offset** (e.g. `2026-02-14T10:00:00+01:00`)
+- Written for **Node >= 22**
+
+## Install / run
+
+From this directory:
+
+```bash
+npm test
+
+# Run without installing:
+node ./bin/clawendar.js today
+
+# Optional: install the `clawendar` command into your PATH
+npm i -g .
+# or (for local dev)
+npm link
+```
+
+## Data location
+
+By default the CLI writes to:
+
+- `~/.clawendar/events.json`
+
+Override with:
+
+- `CLAWENDAR_DATA_DIR=/some/dir`
+
+Example:
+
+```bash
+CLAWENDAR_DATA_DIR=/tmp/my-cal node ./bin/clawendar.js week
+```
+
+## Datetime format (important)
+
+`--start`, `--end`, `--from`, and `--to` must be **strict ISO-8601 with an explicit offset**:
+
+- ✅ `2026-02-14T10:00:00+01:00`
+- ❌ `2026-02-14 10:00`
+- ❌ `2026-02-14T10:00:00Z` (UTC `Z` is currently not accepted; use `+00:00`)
+
+If `--end` is omitted on `add`, it defaults to **start + 1 hour**.
+
+## Commands
+
+### Add an event
+
+```bash
+clawendar add "Dinner" \
+  --start 2026-02-14T19:00:00+01:00 \
+  --end   2026-02-14T21:00:00+01:00 \
+  --place "Home" \
+  --participants "Alice,Bob"
+```
+
+Notes:
+- The title is the first non-flag argument after `add`.
+- `--participants` is a comma-separated string (no spaces) and is stored as an array.
+
+### List events
+
+```bash
+clawendar today
+clawendar week
+
+clawendar list \
+  --from 2026-03-01T00:00:00+01:00 \
+  --to   2026-03-31T23:59:59+01:00
+```
+
+### Edit an event
+
+```bash
+clawendar edit <id> --title "New title"
+clawendar edit <id> --place "Room 42"
+clawendar edit <id> --participants "Alice,Bob,Charlie"
+clawendar edit <id> --start 2026-02-14T11:00:00+01:00 --end 2026-02-14T12:00:00+01:00
+```
+
+### Delete an event
+
+```bash
+clawendar delete <id>
+```
+
+## Output format
+
+Each event prints as a single line:
+
+```
+<id>  <start>  <title>  [<place>]  (<participants...>)
+```
+
+(Place / participants only appear when present.)

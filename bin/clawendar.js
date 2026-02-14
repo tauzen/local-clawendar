@@ -109,6 +109,11 @@ try {
 
     case "list": {
       const flags = parseFlags(args.slice(1));
+      if (!flags.from || !flags.to) {
+        process.stderr.write("Error: --from and --to are required\n");
+        process.exit(1);
+      }
+
       const events = calendar.listRange(flags.from, flags.to);
       printEvents(events);
       break;

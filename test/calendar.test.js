@@ -107,6 +107,19 @@ describe("createCalendar", () => {
     it("throws for a non-existent event", () => {
       assert.throws(() => calendar.edit("non-existent", { title: "X" }));
     });
+
+    it("should reject invalid edits where end is before start", () => {
+      const event = calendar.add({
+        title: "Meeting",
+        start: "2026-02-14T10:00:00+01:00",
+        end: "2026-02-14T11:00:00+01:00",
+      });
+
+      assert.throws(() => {
+        calendar.edit(event.id, { end: "2026-02-14T09:00:00+01:00" });
+      });
+    });
+
   });
 
   describe("list", () => {
@@ -244,5 +257,20 @@ describe("createCalendar", () => {
       );
       assert.equal(events.length, 1);
     });
+
+    it("includes events exactly on range boundaries", () => {
+      calendar.add({
+        title: "Starts on boundary",
+        start: "2026-03-01T00:00:00+01:00",
+      });
+
+      const events = calendar.listRange(
+        "2026-03-01T00:00:00+01:00",
+        "2026-03-01T00:00:00+01:00"
+      );
+      assert.equal(events.length, 1);
+      assert.equal(events[0].title, "Starts on boundary");
+    });
+
   });
 });

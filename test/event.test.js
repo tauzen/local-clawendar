@@ -72,6 +72,16 @@ describe("createEvent", () => {
 
     assert.equal(event.start, "2026-02-14T10:00:00+09:00");
   });
+
+  it("defaults end correctly across day boundaries while preserving the original offset", () => {
+    const event = createEvent({
+      title: "Late call",
+      start: "2026-02-14T23:30:00-05:00",
+    });
+
+    assert.equal(event.end, "2026-02-15T00:30:00-05:00");
+  });
+
 });
 
 describe("validateEvent", () => {
@@ -136,6 +146,15 @@ describe("validateEvent", () => {
     const result = validateEvent({
       title: "Meeting",
       start: "2026-02-14T10:00:00",
+    });
+
+    assert.equal(result.valid, false);
+  });
+
+  it("rejects impossible calendar dates that parse via JS date normalization", () => {
+    const result = validateEvent({
+      title: "Impossible day",
+      start: "2026-02-30T10:00:00+01:00",
     });
 
     assert.equal(result.valid, false);

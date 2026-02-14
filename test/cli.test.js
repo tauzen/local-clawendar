@@ -162,6 +162,14 @@ describe("CLI: list command", () => {
     assert.equal(exitCode, 0);
     assert.ok(stdout.includes("March event"));
   });
+
+  it("fails when --from or --to is missing", async () => {
+    const { exitCode, stderr } = await run(["list", "--from", "2026-03-01T00:00:00+01:00"], tmpDir);
+
+    assert.notEqual(exitCode, 0);
+    assert.ok(stderr.length > 0);
+  });
+
 });
 
 describe("CLI: delete command", () => {
@@ -244,6 +252,17 @@ describe("CLI: edit command", () => {
     assert.equal(exitCode, 0);
     assert.ok(stdout.includes("Room 42"));
   });
+
+  it("fails when editing a non-existent event", async () => {
+    const { exitCode, stderr } = await run(
+      ["edit", "00000000-0000-0000-0000-000000000000", "--title", "Nope"],
+      tmpDir
+    );
+
+    assert.notEqual(exitCode, 0);
+    assert.ok(stderr.length > 0);
+  });
+
 });
 
 describe("CLI: unknown command", () => {

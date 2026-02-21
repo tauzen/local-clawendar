@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { createCalendar } from "../lib/calendar.js";
+import { isStrictISODateTimeWithOffset } from "../lib/event.js";
 import path from "node:path";
 import os from "node:os";
 
@@ -29,6 +30,9 @@ function formatEvent(event) {
   if (event.participants && event.participants.length > 0) {
     line += `  (${event.participants.join(", ")})`;
   }
+  if (event.rrule) {
+    line += "  {series}";
+  }
   return line;
 }
 
@@ -47,10 +51,12 @@ function printUsage() {
     `Usage: clawendar <command> [options]
 
 Commands:
-  add <title> --start <datetime> [--end <datetime>] [--place <place>] [--participants <a,b>]
+  add <title> --start <datetime> [--end <datetime>] [--place <place>] [--participants <a,b>] [--tz <iana>] [--rrule <rrule>]
   today                          List today's events
   week                           List this week's events
   list --from <datetime> --to <datetime>   List events in range
+  occurrences <id> --from <datetime> --to <datetime>  Expand recurring event
+  skip <id> --date <datetime>    Skip one recurring instance
   delete <id>                    Delete an event
   edit <id> [--title <t>] [--place <p>] [--participants <a,b>]  Edit an event
 `
@@ -60,11 +66,10 @@ Commands:
 try {
   switch (command) {
     case "add": {
-      // Find title: first non-flag argument after "add", skipping flag values
       let title = null;
       for (let i = 1; i < args.length; i++) {
         if (args[i].startsWith("--")) {
-          i++; // skip the flag's value
+          i++;
           continue;
         }
         title = args[i];
@@ -89,6 +94,8 @@ try {
       if (flags.end) eventData.end = flags.end;
       if (flags.place) eventData.place = flags.place;
       if (flags.participants) eventData.participants = flags.participants.split(",");
+      if (flags.tz) eventData.tz = flags.tz;
+      if (flags.rrule) eventData.rrule = flags.rrule;
 
       const event = calendar.add(eventData);
       console.log(formatEvent(event));
@@ -116,6 +123,40 @@ try {
 
       const events = calendar.listRange(flags.from, flags.to);
       printEvents(events);
+      break;
+    }
+
+    case "occurrences": {
+      const id = args[1];
+      const flags = parseFlags(args.slice(2));
+      if (!flags.from || !flags.to) {
+        process.stderr.write("Error: --from and --to are required\n");
+        process.exit(1);
+      }
+      const dates = calendar.occurrences(id, flags.from, flags.to);
+      if (dates.length === 0) {
+        console.log("No events.");
+      } else {
+        for (const iso of dates) {
+          console.log(`${id}  ${iso}  {occurrence}`);
+        }
+      }
+      break;
+    }
+
+    case "skip": {
+      const id = args[1];
+      const flags = parseFlags(args.slice(2));
+      if (!flags.date) {
+        process.stderr.write("Error: --date is required\n");
+        process.exit(1);
+      }
+      if (!isStrictISODateTimeWithOffset(flags.date)) {
+        process.stderr.write("Error: --date must be strict ISO datetime with offset\n");
+        process.exit(1);
+      }
+      calendar.skip(id, flags.date);
+      console.log(`Skipped occurrence ${flags.date} for event ${id}`);
       break;
     }
 

@@ -124,7 +124,9 @@ clawendar delete <id>
 Each event prints as a single line:
 
 ```
-<id>  <start>  <title>  [<place>]  (<participants...>)
+<id>  <start>  <title>  [<place>]  (<participants...>)  {series|occurrence}
 ```
 
-(Place / participants only appear when present.)
+- Place / participants only appear when present.
+- Recurring event definitions are tagged `{series}`.
+- Expanded instances (from `occurrences`) are tagged `{occurrence}`.

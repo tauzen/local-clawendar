@@ -2,12 +2,8 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import os from "node:os";
 import { createStorage } from "../lib/storage.js";
-
-function makeTmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "clawendar-test-"));
-}
+import { makeTmpDir } from "./_helpers.js";
 
 describe("createStorage", () => {
   let tmpDir;

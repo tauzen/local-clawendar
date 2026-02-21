@@ -1,34 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-/**
- * Recurrence test suite (SPEC)
- *
- * These tests run by default.
- *
- * Until recurrence is implemented they will fail — that is intentional (TDD).
- *
- * Goal:
- * - Support nth weekday rules (e.g. "2nd Tuesday")
- * - Support wall-clock stable recurrences across DST in an IANA time zone (e.g. Europe/Warsaw)
- * - Provide an expansion API that yields strict ISO-8601 datetimes WITH OFFSET (no `Z`).
- */
-
 describe("recurrence (spec)", () => {
   it("expands a monthly 2nd Tuesday rule and keeps wall-clock time stable across DST", async () => {
-    /**
-     * Proposed API (implement as you like, but keep behavior):
-     *
-     *   expandOccurrences({
-     *     dtStart: "2026-03-10T10:00:00+01:00", // local Warsaw time before DST
-     *     tz: "Europe/Warsaw",
-     *     rrule: "FREQ=MONTHLY;INTERVAL=1;BYDAY=TU;BYSETPOS=2",
-     *     from: "2026-03-01T00:00:00+01:00",
-     *     to:   "2026-05-01T00:00:00+02:00",
-     *     mode: "wall", // wall-clock stable
-     *   }) => string[]
-     */
-
     const { expandOccurrences } = await import("../lib/recurrence.js");
 
     const out = expandOccurrences({

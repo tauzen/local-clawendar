@@ -1,38 +1,7 @@
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
-import os from "node:os";
-import { execFile } from "node:child_process";
-import { fileURLToPath } from "node:url";
-
-/**
- * CLI recurrence tests (SPEC)
- *
- * This runs by default.
- *
- * Until CLI recurrence commands are implemented it will fail — intentional (TDD).
- */
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CLI_PATH = path.join(__dirname, "..", "bin", "clawendar.js");
-
-function makeTmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "clawendar-test-"));
-}
-
-function run(args, tmpDir) {
-  return new Promise((resolve) => {
-    execFile(
-      process.execPath,
-      [CLI_PATH, ...args],
-      { env: { ...process.env, CLAWENDAR_DATA_DIR: tmpDir } },
-      (error, stdout, stderr) => {
-        resolve({ exitCode: error ? error.code : 0, stdout, stderr });
-      }
-    );
-  });
-}
+import { makeTmpDir, run } from "./_helpers.js";
 
 describe("CLI: recurring events (spec)", () => {
   let tmpDir;
@@ -46,9 +15,6 @@ describe("CLI: recurring events (spec)", () => {
   });
 
   it("adds a recurring event and lists occurrences in a range", async () => {
-    // Proposed UX (adjust flags if you prefer; keep capabilities):
-    // - add supports --tz + --rrule
-    // - occurrences expands instances for display
     const addRes = await run(
       [
         "add",

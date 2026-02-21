@@ -64,7 +64,7 @@ Notes:
 - The title is the first non-flag argument after `add`.
 - `--participants` is a comma-separated string (no spaces) and is stored as an array.
 
-### Add a recurring event (spec; in progress)
+### Add a recurring event
 
 Recurrence is designed to be **wall-clock stable** in an IANA timezone (for example `Europe/Warsaw`), meaning a “09:00 weekly meeting” stays 09:00 local time even when DST changes (the **offset** will change).
 
@@ -79,7 +79,7 @@ RRULE notes:
 - Supports **nth weekday** patterns via `BYDAY=<weekday>;BYSETPOS=<n>` (e.g. `2nd Tuesday`).
 - The `--start` value must still be a strict ISO-8601 datetime with an explicit offset.
 
-### Expand occurrences for a recurring event (spec; in progress)
+### Expand occurrences for a recurring event
 
 ```bash
 clawendar occurrences <id> \
@@ -87,7 +87,7 @@ clawendar occurrences <id> \
   --to   2026-05-01T00:00:00+02:00
 ```
 
-### Skip a single occurrence (exception) (spec; in progress)
+### Skip a single occurrence (exception)
 
 ```bash
 clawendar skip <id> --date 2026-03-30T09:00:00+02:00

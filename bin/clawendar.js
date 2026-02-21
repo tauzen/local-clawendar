@@ -11,6 +11,8 @@ const calendar = createCalendar({ dataDir });
 const args = process.argv.slice(2);
 const command = args[0];
 
+// (help handling is implemented below, after printUsage is defined)
+
 function parseFlags(args) {
   const flags = {};
   for (let i = 0; i < args.length; i++) {
@@ -61,6 +63,13 @@ Commands:
   edit <id> [--title <t>] [--place <p>] [--participants <a,b>]  Edit an event
 `
   );
+}
+
+// Help should be a successful exit (many wrappers treat non-zero as failure).
+if (!command || args.includes("--help") || args.includes("-h") || command === "help") {
+  // Keep usage on stderr for consistency, but exit 0.
+  printUsage();
+  process.exit(0);
 }
 
 try {

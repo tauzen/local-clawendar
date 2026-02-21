@@ -234,6 +234,47 @@ describe("createCalendar", () => {
       assert.equal(events[0].title, "In range");
     });
 
+    it("expands recurring series into occurrences within the range", () => {
+      const series = calendar.add({
+        title: "Gymnastics",
+        start: "2026-02-27T18:00:00+01:00",
+        end: "2026-02-27T19:45:00+01:00",
+        place: "Hoża 88",
+        tz: "Europe/Warsaw",
+        rrule: "FREQ=WEEKLY;BYDAY=FR",
+      });
+
+      const events = calendar.listRange(
+        "2026-03-02T00:00:00+01:00",
+        "2026-03-08T23:59:59+01:00"
+      );
+
+      assert.equal(events.length, 1);
+      assert.equal(events[0].title, "Gymnastics");
+      assert.equal(events[0].seriesId, series.id);
+      assert.equal(events[0].start, "2026-03-06T18:00:00+01:00");
+      assert.equal(events[0].end, "2026-03-06T19:45:00+01:00");
+    });
+
+    it("honors skip/exDates when expanding recurring series", () => {
+      const series = calendar.add({
+        title: "Gymnastics",
+        start: "2026-02-27T18:00:00+01:00",
+        end: "2026-02-27T19:45:00+01:00",
+        tz: "Europe/Warsaw",
+        rrule: "FREQ=WEEKLY;BYDAY=FR",
+      });
+
+      calendar.skip(series.id, "2026-03-06T18:00:00+01:00");
+
+      const events = calendar.listRange(
+        "2026-03-02T00:00:00+01:00",
+        "2026-03-08T23:59:59+01:00"
+      );
+
+      assert.equal(events.length, 0);
+    });
+
     it("returns an empty array when no events in range", () => {
       calendar.add({ title: "Event", start: "2026-06-01T10:00:00+01:00" });
 

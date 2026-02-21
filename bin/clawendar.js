@@ -34,6 +34,8 @@ function formatEvent(event) {
   }
   if (event.rrule) {
     line += "  {series}";
+  } else if (event.seriesId) {
+    line += "  {occurrence}";
   }
   return line;
 }

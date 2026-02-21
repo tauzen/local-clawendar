@@ -4,10 +4,9 @@ import assert from "node:assert/strict";
 /**
  * Recurrence test suite (SPEC)
  *
- * These tests are intentionally skipped by default so the current main branch stays green.
- * Enable when implementing recurring meetings:
+ * These tests run by default.
  *
- *   CLAWENDAR_RECUR_TESTS=1 npm test
+ * Until recurrence is implemented they will fail — that is intentional (TDD).
  *
  * Goal:
  * - Support nth weekday rules (e.g. "2nd Tuesday")
@@ -15,11 +14,7 @@ import assert from "node:assert/strict";
  * - Provide an expansion API that yields strict ISO-8601 datetimes WITH OFFSET (no `Z`).
  */
 
-const RUN = process.env.CLAWENDAR_RECUR_TESTS === "1";
-
-const specDescribe = RUN ? describe : describe.skip;
-
-specDescribe("recurrence (spec)", () => {
+describe("recurrence (spec)", () => {
   it("expands a monthly 2nd Tuesday rule and keeps wall-clock time stable across DST", async () => {
     /**
      * Proposed API (implement as you like, but keep behavior):

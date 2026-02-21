@@ -9,12 +9,10 @@ import { fileURLToPath } from "node:url";
 /**
  * CLI recurrence tests (SPEC)
  *
- * Skipped by default. Enable with:
- *   CLAWENDAR_RECUR_TESTS=1 npm test
+ * This runs by default.
+ *
+ * Until CLI recurrence commands are implemented it will fail — intentional (TDD).
  */
-
-const RUN = process.env.CLAWENDAR_RECUR_TESTS === "1";
-const specDescribe = RUN ? describe : describe.skip;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CLI_PATH = path.join(__dirname, "..", "bin", "clawendar.js");
@@ -36,7 +34,7 @@ function run(args, tmpDir) {
   });
 }
 
-specDescribe("CLI: recurring events (spec)", () => {
+describe("CLI: recurring events (spec)", () => {
   let tmpDir;
 
   beforeEach(() => {

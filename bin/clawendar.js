@@ -62,7 +62,7 @@ Commands:
   occurrences <id> --from <datetime> --to <datetime>  Expand recurring event
   skip <id> --date <datetime>    Skip one recurring instance
   delete <id>                    Delete an event
-  edit <id> [--title <t>] [--place <p>] [--participants <a,b>]  Edit an event
+  edit <id> [--title <t>] [--start <datetime>] [--end <datetime>] [--place <p>] [--participants <a,b>]  Edit an event
 `
   );
 }

@@ -1,13 +1,8 @@
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
-import os from "node:os";
 import { createCalendar } from "../lib/calendar.js";
-
-function makeTmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "clawendar-test-"));
-}
+import { makeTmpDir } from "./_helpers.js";
 
 describe("createCalendar", () => {
   let tmpDir;
@@ -144,11 +139,10 @@ describe("createCalendar", () => {
   describe("today", () => {
     it("returns only events occurring today", () => {
       const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      const todayStr = `${yyyy}-${mm}-${dd}T10:00:00+00:00`;
-      const tomorrowStr = `${yyyy}-${mm}-${String(today.getDate() + 1).padStart(2, "0")}T10:00:00+00:00`;
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}T10:00:00+00:00`;
+      const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}T10:00:00+00:00`;
 
       calendar.add({ title: "Today event", start: todayStr });
       calendar.add({ title: "Tomorrow event", start: tomorrowStr });
@@ -170,16 +164,17 @@ describe("createCalendar", () => {
 
     it("includes events that span across today", () => {
       const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      const yesterdayDd = String(today.getDate() - 1).padStart(2, "0");
-      const tomorrowDd = String(today.getDate() + 1).padStart(2, "0");
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const fmtDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
       calendar.add({
         title: "Multi-day event",
-        start: `${yyyy}-${mm}-${yesterdayDd}T08:00:00+00:00`,
-        end: `${yyyy}-${mm}-${tomorrowDd}T18:00:00+00:00`,
+        start: `${fmtDate(yesterday)}T08:00:00+00:00`,
+        end: `${fmtDate(tomorrow)}T18:00:00+00:00`,
       });
 
       const events = calendar.today();

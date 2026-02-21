@@ -1,31 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-/**
- * Recurrence edge cases (SPEC)
- *
- * These are the scenarios that usually bite later:
- * - DST gaps (nonexistent local times)
- * - DST folds (ambiguous local times)
- * - BYSETPOS negative (e.g. last weekday of month)
- * - Multiple weekdays
- * - INTERVAL > 1
- * - COUNT / UNTIL bounds
- * - Exceptions that don't match an occurrence
- */
-
 describe("recurrence edge cases (spec)", () => {
   it("handles DST spring-forward gaps by preserving wall-clock intent (policy must be explicit)", async () => {
-    /**
-     * Europe/Warsaw spring-forward in 2026 is on 2026-03-29.
-     * Local times between 02:00 and 02:59 do not exist.
-     *
-     * We need a policy. Proposed policy for wall-clock mode:
-     * - If a requested wall time does not exist on that date, shift forward to the next valid time.
-     *
-     * Example: 02:30 weekly on Sundays -> on DST start day, becomes 03:30.
-     */
-
     const { expandOccurrences } = await import("../lib/recurrence.js");
 
     const out = expandOccurrences({
@@ -46,14 +23,6 @@ describe("recurrence edge cases (spec)", () => {
   });
 
   it("handles DST fall-back folds (ambiguous local times) deterministically", async () => {
-    /**
-     * On DST end day, a time like 02:30 may occur twice with different offsets.
-     * Proposed policy in wall-clock mode: keep the *standard* occurrence (later offset)
-     * or require explicit disambiguation.
-     *
-     * This test encodes: choose the later offset (standard time) when ambiguous.
-     */
-
     const { expandOccurrences } = await import("../lib/recurrence.js");
 
     const out = expandOccurrences({
@@ -90,10 +59,6 @@ describe("recurrence edge cases (spec)", () => {
   });
 
   it("supports multiple BYDAY values with nth selection", async () => {
-    /**
-     * Example: "2nd business day Tuesday/Thursday" in a month.
-     * With BYDAY=TU,TH and BYSETPOS=2, pick the 2nd among those.
-     */
     const { expandOccurrences } = await import("../lib/recurrence.js");
 
     const out = expandOccurrences({

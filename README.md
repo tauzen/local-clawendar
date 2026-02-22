@@ -22,6 +22,23 @@ npm i -g .
 npm link
 ```
 
+## OpenClaw Skill
+
+This repo ships an OpenClaw Skill at `skills/clawendar/SKILL.md`.
+
+### Install (recommended)
+
+1) Go to this repo’s GitHub Releases.
+2) Download the attached `clawendar.skill` file.
+3) Install it into your OpenClaw instance (Skill installer / skills directory).
+
+### Install (dev / from source)
+
+Point OpenClaw at this repo’s `skills/` directory, e.g. set:
+- `skills.load.extraDirs = ["/path/to/local-clawendar/skills"]`
+
+---
+
 ## Data location
 
 By default the CLI writes to:

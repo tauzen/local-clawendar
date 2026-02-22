@@ -1,0 +1,40 @@
+name: Release OpenClaw Skill
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert skill exists
+        run: |
+          test -f skills/clawendar/SKILL.md
+
+      - name: Package .skill (zip)
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          # .skill files are zip archives. Include the skill folder so installers see clawendar/SKILL.md at the root.
+          (cd skills && zip -r ../dist/clawendar.skill clawendar)
+
+      - name: Upload .skill to GitHub Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/clawendar.skill
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clawendar.skill
+          path: dist/clawendar.skill

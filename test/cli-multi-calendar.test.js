@@ -70,6 +70,23 @@ describe("CLI: multi-calendar + categories (spec tests)", () => {
     assert.match(stderr, /calendar/i);
   });
 
+  it("add fails for reserved --calendar default", async () => {
+    const { exitCode, stderr } = await run(
+      [
+        "add",
+        "Bad event",
+        "--start",
+        "2026-03-10T10:00:00+01:00",
+        "--calendar",
+        "default",
+      ],
+      tmpDir
+    );
+
+    assert.notEqual(exitCode, 0);
+    assert.match(stderr, /reserved/i);
+  });
+
   it("list supports --calendar filter", async () => {
     await run(
       [
@@ -314,5 +331,30 @@ describe("CLI: multi-calendar + categories (spec tests)", () => {
     assert.equal(exitCode, 0);
     assert.ok(stdout.includes("birthdays"));
     assert.ok(stdout.includes("family"));
+  });
+
+  it("edit fails for reserved --calendar default", async () => {
+    const { stdout: addOut } = await run(
+      [
+        "add",
+        "Move me",
+        "--start",
+        "2026-03-10T10:00:00+01:00",
+        "--calendar",
+        "personal",
+      ],
+      tmpDir
+    );
+
+    const idMatch = addOut.match(/[0-9a-f-]{36}/);
+    assert.ok(idMatch, "should include id in output");
+
+    const { exitCode, stderr } = await run(
+      ["edit", idMatch[0], "--calendar", "default"],
+      tmpDir
+    );
+
+    assert.notEqual(exitCode, 0);
+    assert.match(stderr, /reserved/i);
   });
 });

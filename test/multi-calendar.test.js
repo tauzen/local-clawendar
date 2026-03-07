@@ -50,6 +50,16 @@ describe("multi-calendar + categories (spec tests)", () => {
       });
     });
 
+    it("rejects reserved calendar id 'default'", () => {
+      assert.throws(() => {
+        calendar.add({
+          title: "Bad event",
+          start: "2026-03-08T10:00:00+01:00",
+          calendarId: "default",
+        });
+      });
+    });
+
     it("rejects non-array categories", () => {
       assert.throws(() => {
         calendar.add({
@@ -81,6 +91,18 @@ describe("multi-calendar + categories (spec tests)", () => {
       });
 
       assert.deepEqual(event.categories, ["family"]);
+    });
+
+    it("rejects editing event calendarId to reserved 'default'", () => {
+      const event = calendar.add({
+        title: "Normal event",
+        start: "2026-03-08T10:00:00+01:00",
+        calendarId: "personal",
+      });
+
+      assert.throws(() => {
+        calendar.edit(event.id, { calendarId: "default" });
+      });
     });
   });
 

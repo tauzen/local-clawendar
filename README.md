@@ -83,7 +83,7 @@ clawendar add "Dinner" \
 Notes:
 - The title is the first non-flag argument after `add`.
 - `--participants` is a comma-separated string (no spaces) and is stored as an array.
-- `--calendar` sets `calendarId` on the event.
+- `--calendar` sets `calendarId` on the event (`default` is reserved and cannot be assigned to events).
 - `--category` can be repeated (or provided as comma-separated values) and is stored as normalized lowercase categories.
 
 ### Add a recurring event

@@ -2,6 +2,7 @@
 
 import { createCalendar } from "../lib/calendar.js";
 import { isStrictISODateTimeWithOffset } from "../lib/event.js";
+import { migrateJsonToSqlite } from "../lib/migrate.js";
 import path from "node:path";
 import os from "node:os";
 
@@ -114,6 +115,7 @@ Commands:
   skip <id> --date <datetime>    Skip one recurring instance
   delete <id>                    Delete an event
   edit <id> [--title <t>] [--start <datetime>] [--end <datetime>] [--place <p>] [--participants <a,b>] [--calendar <id>] [--category <name> ...]  Edit an event
+  migrate                        Migrate events from events.json to SQLite
 `
   );
 }
@@ -257,6 +259,12 @@ try {
 
       const updated = calendar.edit(id, updates);
       console.log(formatEvent(updated));
+      break;
+    }
+
+    case "migrate": {
+      const result = migrateJsonToSqlite(dataDir);
+      console.log(`Migration complete: ${result.migrated} migrated, ${result.skipped} skipped (of ${result.total} total).`);
       break;
     }
 

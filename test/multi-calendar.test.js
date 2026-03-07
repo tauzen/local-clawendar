@@ -150,6 +150,43 @@ describe("multi-calendar + categories (spec tests)", () => {
       assert.equal(events.length, 2);
       assert.deepEqual(events.map((e) => e.title), ["Birthday 1", "Holiday 1"]);
     });
+
+    it("treats calendarId=default as events without calendarId", () => {
+      calendar.add({
+        title: "Default event",
+        start: "2026-03-14T10:00:00+01:00",
+      });
+      calendar.add({
+        title: "Holiday event",
+        start: "2026-03-14T00:00:00+01:00",
+        calendarId: "holidays",
+      });
+
+      const events = calendar.list({ calendarId: "default" });
+      assert.equal(events.length, 1);
+      assert.equal(events[0].title, "Default event");
+    });
+
+    it("supports default inside calendarIds list", () => {
+      calendar.add({
+        title: "Default event",
+        start: "2026-03-15T10:00:00+01:00",
+      });
+      calendar.add({
+        title: "Holiday event",
+        start: "2026-03-15T00:00:00+01:00",
+        calendarId: "holidays",
+      });
+      calendar.add({
+        title: "Personal event",
+        start: "2026-03-15T12:00:00+01:00",
+        calendarId: "personal",
+      });
+
+      const events = calendar.list({ calendarIds: ["default", "holidays"] });
+      assert.equal(events.length, 2);
+      assert.deepEqual(events.map((e) => e.title), ["Holiday event", "Default event"]);
+    });
   });
 
   describe("category filters", () => {

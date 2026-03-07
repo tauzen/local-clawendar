@@ -242,6 +242,47 @@ describe("CLI: multi-calendar + categories (spec tests)", () => {
     assert.ok(!stdout.includes("Personal today"));
   });
 
+  it("list supports --calendar default for unassigned events", async () => {
+    await run(
+      [
+        "add",
+        "Default event",
+        "--start",
+        "2026-04-10T10:00:00+02:00",
+      ],
+      tmpDir
+    );
+
+    await run(
+      [
+        "add",
+        "Holiday event",
+        "--start",
+        "2026-04-10T00:00:00+02:00",
+        "--calendar",
+        "holidays",
+      ],
+      tmpDir
+    );
+
+    const { exitCode, stdout } = await run(
+      [
+        "list",
+        "--from",
+        "2026-04-01T00:00:00+02:00",
+        "--to",
+        "2026-04-30T23:59:59+02:00",
+        "--calendar",
+        "default",
+      ],
+      tmpDir
+    );
+
+    assert.equal(exitCode, 0);
+    assert.ok(stdout.includes("Default event"));
+    assert.ok(!stdout.includes("Holiday event"));
+  });
+
   it("edit supports changing calendar and categories", async () => {
     const { stdout: addOut } = await run(
       [

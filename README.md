@@ -128,7 +128,7 @@ clawendar list \
 
 Filtering options for `today`, `week`, and `list`:
 
-- `--calendar <id>`: include only one calendar
+- `--calendar <id>`: include only one calendar (`--calendar default` means events without `calendarId`)
 - `--calendars <a,b>`: include multiple calendars
 - `--category-any <a,b>`: OR filter (event has at least one)
 - `--category-all <a,b>`: AND filter (event has all)
@@ -137,6 +137,11 @@ Examples:
 
 ```bash
 clawendar today --calendar birthdays
+
+clawendar list \
+  --from 2026-04-01T00:00:00+02:00 \
+  --to   2026-04-30T23:59:59+02:00 \
+  --calendar default
 
 clawendar list \
   --from 2026-12-01T00:00:00+01:00 \

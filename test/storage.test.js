@@ -104,4 +104,27 @@ describe("createStorage", () => {
     assert.equal(events.length, 1);
     assert.equal(events[0].title, "Persisted");
   });
+
+  it("stores events in a SQLite database file", () => {
+    storage.save({ id: "1", title: "A", start: "2026-02-14T10:00:00+01:00", createdAt: "2026-02-14T09:00:00+01:00" });
+    assert.ok(fs.existsSync(path.join(tmpDir, "events.db")));
+  });
+
+  it("round-trips array fields (participants, categories, exDates)", () => {
+    const event = {
+      id: "arr-1",
+      title: "Arrays",
+      start: "2026-02-14T10:00:00+01:00",
+      createdAt: "2026-02-14T09:00:00+01:00",
+      participants: ["Alice", "Bob"],
+      categories: ["work", "meeting"],
+      exDates: ["2026-03-01T10:00:00+01:00"],
+    };
+
+    storage.save(event);
+    const loaded = storage.findById("arr-1");
+    assert.deepEqual(loaded.participants, ["Alice", "Bob"]);
+    assert.deepEqual(loaded.categories, ["work", "meeting"]);
+    assert.deepEqual(loaded.exDates, ["2026-03-01T10:00:00+01:00"]);
+  });
 });

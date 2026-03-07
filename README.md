@@ -74,12 +74,17 @@ clawendar add "Dinner" \
   --start 2026-02-14T19:00:00+01:00 \
   --end   2026-02-14T21:00:00+01:00 \
   --place "Home" \
-  --participants "Alice,Bob"
+  --participants "Alice,Bob" \
+  --calendar personal \
+  --category family \
+  --category important
 ```
 
 Notes:
 - The title is the first non-flag argument after `add`.
 - `--participants` is a comma-separated string (no spaces) and is stored as an array.
+- `--calendar` sets `calendarId` on the event.
+- `--category` can be repeated (or provided as comma-separated values) and is stored as normalized lowercase categories.
 
 ### Add a recurring event
 
@@ -121,6 +126,26 @@ clawendar list \
   --to   2026-03-31T23:59:59+01:00
 ```
 
+Filtering options for `today`, `week`, and `list`:
+
+- `--calendar <id>`: include only one calendar
+- `--calendars <a,b>`: include multiple calendars
+- `--category-any <a,b>`: OR filter (event has at least one)
+- `--category-all <a,b>`: AND filter (event has all)
+
+Examples:
+
+```bash
+clawendar today --calendar birthdays
+
+clawendar list \
+  --from 2026-12-01T00:00:00+01:00 \
+  --to   2026-12-31T23:59:59+01:00 \
+  --category-any family,birthday
+
+clawendar week --calendars personal,holidays --category-all important,travel
+```
+
 ### Edit an event
 
 ```bash
@@ -128,6 +153,7 @@ clawendar edit <id> --title "New title"
 clawendar edit <id> --place "Room 42"
 clawendar edit <id> --participants "Alice,Bob,Charlie"
 clawendar edit <id> --start 2026-02-14T11:00:00+01:00 --end 2026-02-14T12:00:00+01:00
+clawendar edit <id> --calendar birthdays --category family --category birthday
 ```
 
 ### Delete an event
@@ -141,9 +167,11 @@ clawendar delete <id>
 Each event prints as a single line:
 
 ```
-<id>  <start>  <title>  [<place>]  (<participants...>)  {series|occurrence}
+<id>  <start>  <title>  [<place>]  (<participants...>)  <calendarId>  #cat1,#cat2  {series|occurrence}
 ```
 
 - Place / participants only appear when present.
+- Calendar appears as `<calendarId>` when present.
+- Categories appear as `#cat1,#cat2` when present.
 - Recurring event definitions are tagged `{series}`.
 - Expanded instances (from `occurrences`) are tagged `{occurrence}`.

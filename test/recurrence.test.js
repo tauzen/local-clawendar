@@ -59,6 +59,24 @@ describe("recurrence (spec)", () => {
     ]);
   });
 
+  it("expands a yearly rule for birthdays", async () => {
+    const { expandOccurrences } = await import("../lib/recurrence.js");
+
+    const out = expandOccurrences({
+      dtStart: "2026-05-15T00:00:00+02:00",
+      tz: "Europe/Warsaw",
+      rrule: "FREQ=YEARLY;INTERVAL=1",
+      from: "2026-01-01T00:00:00+01:00",
+      to: "2028-01-01T00:00:00+01:00",
+      mode: "wall",
+    });
+
+    assert.deepEqual(out, [
+      "2026-05-15T00:00:00+02:00",
+      "2027-05-15T00:00:00+02:00",
+    ]);
+  });
+
   it("rejects unsupported / ambiguous rules with a clear error", async () => {
     const { expandOccurrences } = await import("../lib/recurrence.js");
 

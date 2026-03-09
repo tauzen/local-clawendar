@@ -242,6 +242,57 @@ describe("CLI: edit command", () => {
 
 });
 
+describe("CLI: argument validation", () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = makeTmpDir();
+  });
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("fails when a flag is missing a value", async () => {
+    const { exitCode, stderr } = await run(["add", "Meeting", "--start"], tmpDir);
+
+    assert.notEqual(exitCode, 0);
+    assert.ok(stderr.includes("missing a value"));
+  });
+
+  it("fails when delete command is missing the event id", async () => {
+    const { exitCode, stderr } = await run(["delete"], tmpDir);
+
+    assert.notEqual(exitCode, 0);
+    assert.ok(stderr.includes("event id is required"));
+  });
+
+
+
+  it("fails when command receives an unknown flag", async () => {
+    const { exitCode, stderr } = await run(["delete", "abc", "--from", "2026-03-01T00:00:00+01:00"], tmpDir);
+
+    assert.notEqual(exitCode, 0);
+    assert.ok(stderr.includes("Unknown flag --from"));
+  });
+
+  it("trims csv values for participants", async () => {
+    const { exitCode, stdout } = await run(
+      [
+        "add",
+        "Lunch",
+        "--start",
+        "2026-02-14T12:00:00+01:00",
+        "--participants",
+        "Alice, Bob",
+      ],
+      tmpDir
+    );
+
+    assert.equal(exitCode, 0);
+    assert.ok(stdout.includes("(Alice, Bob)"));
+  });
+});
+
 describe("CLI: unknown command", () => {
   it("prints usage help for unknown commands", async () => {
     const tmpDir = makeTmpDir();

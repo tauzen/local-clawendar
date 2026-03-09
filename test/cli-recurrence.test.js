@@ -51,6 +51,29 @@ describe("CLI: recurring events (spec)", () => {
     assert.ok(occ.stdout.includes("2026-04-14T10:00:00+02:00"));
   });
 
+  it("rejects unsupported yearly recurrence at add-time (regression test)", async () => {
+    const addRes = await run(
+      [
+        "add",
+        "Birthday",
+        "--start",
+        "2026-05-15T00:00:00+02:00",
+        "--end",
+        "2026-05-15T23:59:59+02:00",
+        "--tz",
+        "Europe/Warsaw",
+        "--rrule",
+        "FREQ=YEARLY;INTERVAL=1",
+      ],
+      tmpDir
+    );
+
+    // Current bug: CLI accepts this and stores invalid recurrence that later breaks `list`.
+    // Desired behavior: reject at add-time with a clear error.
+    assert.notEqual(addRes.exitCode, 0, "add should fail for unsupported YEARLY recurrence");
+    assert.match(`${addRes.stderr}\n${addRes.stdout}`, /unsupported|invalid\s+FREQ/i);
+  });
+
   it("can skip a single occurrence (exception) and it disappears from expansion", async () => {
     const addRes = await run(
       [

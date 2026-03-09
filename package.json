@@ -1,6 +1,6 @@
 {
   "name": "clawendar",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Minimal CLI calendar with timezone support",
   "type": "module",
   "bin": {

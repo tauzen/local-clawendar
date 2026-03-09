@@ -160,14 +160,35 @@ function printUsage() {
     `Usage: clawendar <command> [options]
 
 Commands:
-  add <title> --start <datetime> [--end <datetime>] [--place <place>] [--participants <a,b>] [--tz <iana>] [--rrule <rrule>] [--calendar <id>] [--category <name> ...]
-  today [--calendar <id>] [--calendars <a,b>] [--category-any <a,b>] [--category-all <a,b>]   List today's events
-  week [--calendar <id>] [--calendars <a,b>] [--category-any <a,b>] [--category-all <a,b>]    List this week's events
-  list --from <datetime> --to <datetime> [--calendar <id>] [--calendars <a,b>] [--category-any <a,b>] [--category-all <a,b>]  List events in range
-  occurrences <id> --from <datetime> --to <datetime>  Expand recurring event
-  skip <id> --date <datetime>    Skip one recurring instance
-  delete <id>                    Delete an event
-  edit <id> [--title <t>] [--start <datetime>] [--end <datetime>] [--place <p>] [--participants <a,b>] [--calendar <id>] [--category <name> ...]  Edit an event
+  add <title>       Add a new event
+  today             List today's events
+  week              List this week's events
+  list              List events in a date range
+  occurrences <id>  Expand a recurring event
+  skip <id>         Skip one recurring instance
+  delete <id>       Delete an event
+  edit <id>         Edit an event
+
+Flags:
+  add:          --start <datetime>  (required)
+                [--end <datetime>] [--place <place>] [--participants <a,b>]
+                [--tz <iana>] [--rrule <rrule>] [--calendar <id>]
+                [--category <name> ...]
+
+  today/week:   [--calendar <id>] [--calendars <a,b>]
+                [--category-any <a,b>] [--category-all <a,b>]
+
+  list:         --from <datetime> --to <datetime>  (required)
+                [--calendar <id>] [--calendars <a,b>]
+                [--category-any <a,b>] [--category-all <a,b>]
+
+  occurrences:  --from <datetime> --to <datetime>  (required)
+
+  skip:         --date <datetime>  (required)
+
+  edit:         [--title <t>] [--start <datetime>] [--end <datetime>]
+                [--place <p>] [--participants <a,b>] [--calendar <id>]
+                [--category <name> ...]
 `
   );
 }
